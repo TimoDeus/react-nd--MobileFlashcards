@@ -12,6 +12,6 @@ const MainNavigator = StackNavigator({
 	[ADD_DECK_VIEW]: {
 		screen: AddDeck
 	}
-});
+}, {headerMode: 'none'});
 
 export default MainNavigator;
