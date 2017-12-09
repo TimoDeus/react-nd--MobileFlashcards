@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Container, Content, Fab, Icon, Text} from 'native-base';
+import {Body, Button, Card, CardItem, Container, Content, Fab, Icon, Left, Right, Text, Thumbnail} from 'native-base';
 import {ADD_DECK_VIEW} from '../navigation/MainNavigator';
 import {addDeck, clearDecks, fetchDecks, updateDeck} from '../utils/api';
 import DefaultHeader from './header/DefaultHeader';
@@ -40,17 +40,38 @@ export default class DeckList extends Component {
 	};
 
 	render() {
+		const {decks} = this.state;
 		return (
 			<Container>
 				<DefaultHeader title='Choose your deck'/>
 				<Content>
-					<Text>{JSON.stringify(this.state.decks)}</Text>
-					<Button onPress={() => this.addNewCard()}>
-						<Text>Add New Card</Text>
-					</Button>
-					<Button onPress={() => this.removeDecks()}>
-						<Text>Remove all decks</Text>
-					</Button>
+					{decks ? Object.keys(decks).map(name => {
+						return (
+							<Card key={name}>
+								<CardItem>
+									<Left>
+										<Thumbnail source={{uri: 'Image URL'}}/>
+										<Body>
+										<Text>{name}</Text>
+										<Text note>{decks[name].length} cards</Text>
+										</Body>
+									</Left>
+									<Right>
+										<Button transparent>
+											<Icon active name="trash" />
+											<Text>Delete</Text>
+										</Button>
+									</Right>
+								</CardItem>
+							</Card>
+						)
+					}) : (
+						<Card>
+							<CardItem cardBody>
+								<Text>No decks yet</Text>
+							</CardItem>
+						</Card>
+					)}
 				</Content>
 				<Fab
 					position="bottomRight"
