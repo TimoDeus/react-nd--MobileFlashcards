@@ -2,6 +2,7 @@ import React from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import {Constants} from 'expo';
 import {Body, Header, Left, Right, Title} from 'native-base';
+import PropTypes from 'prop-types';
 
 const DefaultHeader = props => {
 	return (
@@ -23,5 +24,11 @@ const styles = StyleSheet.create({
 		flex: 3
 	}
 });
+
+DefaultHeader.propTypes = {
+	left: PropTypes.shape(),
+	right: PropTypes.shape(),
+	title: PropTypes.string,
+};
 
 export default DefaultHeader;

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {Button, Container, Content, Fab, Icon, Text} from 'native-base';
 import {ADD_DECK_VIEW} from '../navigation/MainNavigator';
 import {addDeck, clearDecks, fetchDecks, updateDeck} from '../utils/api';
-import DefaultHeader from './DefaultHeader';
+import DefaultHeader from './header/DefaultHeader';
+import PropTypes from 'prop-types';
 
 export default class DeckList extends Component {
 
@@ -59,9 +60,13 @@ export default class DeckList extends Component {
 				<Fab
 					position="bottomRight"
 					onPress={() => this.props.navigation.navigate(ADD_DECK_VIEW)}>
-					<Icon ios="ios-add" android='md-add'/>
+					<Icon name="add"/>
 				</Fab>
 			</Container>
 		);
 	}
 }
+
+DeckList.propTypes = {
+	navigation: PropTypes.shape().isRequired
+};
