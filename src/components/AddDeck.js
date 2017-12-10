@@ -3,8 +3,8 @@ import {Button, Container, Content, Form, Input, Item, Label, Text} from 'native
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
-import {NavigationActions} from 'react-navigation';
-import {DECK_LIST_VIEW, EDIT_DECK_VIEW} from '../navigation/MainNavigator';
+import {connect} from 'react-redux';
+import {addDeck} from '../actions/index';
 
 class AddDeck extends Component {
 
@@ -14,18 +14,20 @@ class AddDeck extends Component {
 	}
 
 	submit = () => {
-		const {navigation} = this.props;
-		navigation.state.params.onSubmitHandler(this.state.name).then(
-			() => {
-				const resetAction = NavigationActions.reset({
-					index: 0,
-					actions: [
-						NavigationActions.navigate({routeName: DECK_LIST_VIEW}),
-						NavigationActions.navigate({routeName: EDIT_DECK_VIEW}),
-					]
-				});
-				this.props.navigation.dispatch(resetAction);
-			}
+		const {navigation, addNewDeck} = this.props;
+		addNewDeck(this.state.name).then(
+			// TODO use this when redux is connected
+			// () => {
+			// 	const resetAction = NavigationActions.reset({
+			// 		index: 0,
+			// 		actions: [
+			// 			NavigationActions.navigate({routeName: DECK_LIST_VIEW}),
+			// 			NavigationActions.navigate({routeName: EDIT_DECK_VIEW}),
+			// 		]
+			// 	});
+			// 	this.props.navigation.dispatch(resetAction);
+			// }
+			() => navigation.goBack()
 		);
 	};
 
@@ -50,7 +52,12 @@ class AddDeck extends Component {
 }
 
 AddDeck.propTypes = {
-	navigation: PropTypes.shape().isRequired
+	navigation: PropTypes.shape().isRequired,
+	addNewDeck: PropTypes.func.isRequired
 };
 
-export default AddDeck;
+const mapDispatchToProps = dispatch => ({
+	addNewDeck: data => dispatch(addDeck(data))
+});
+
+export default connect(null, mapDispatchToProps)(AddDeck);

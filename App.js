@@ -3,6 +3,9 @@ import {AppLoading} from 'expo';
 import MainNavigator from './src/navigation/MainNavigator';
 import {initSampleDataIfRequired, loadFonts} from './src/utils/helper';
 import {Root} from 'native-base';
+import reducer from './src/reducers/index';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
 
 export default class App extends React.Component {
 
@@ -24,6 +27,12 @@ export default class App extends React.Component {
 
 	render() {
 		const {isReady} = this.state;
-		return isReady ? <Root><MainNavigator/></Root> : <AppLoading/>;
+		return isReady ? (
+			<Provider store={createStore(reducer)}>
+				<Root>
+					<MainNavigator/>
+				</Root>
+			</Provider>
+		): <AppLoading/>;
 	}
 }

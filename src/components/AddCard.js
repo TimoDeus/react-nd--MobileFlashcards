@@ -3,8 +3,10 @@ import {Body, Button, Container, Content, Form, Input, Item, Label, Text} from '
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
+import {addCardToDeck} from '../actions/index';
+import {connect} from 'react-redux';
 
-class AddDeck extends Component {
+class AddCard extends Component {
 
 	constructor() {
 		super();
@@ -12,11 +14,9 @@ class AddDeck extends Component {
 	}
 
 	submit = () => {
-		const {navigation} = this.props;
 		const card = {question: this.state.question, answer: this.state.answer};
-		navigation.state.params.onSubmitHandler(card).then(
-			() => navigation.goBack()
-		);
+		this.props.addCard(card);
+		this.props.navigation.goBack();
 	};
 
 	render() {
@@ -47,8 +47,17 @@ class AddDeck extends Component {
 	}
 }
 
-AddDeck.propTypes = {
-	navigation: PropTypes.shape().isRequired
+AddCard.propTypes = {
+	navigation: PropTypes.shape().isRequired,
+	addCard: PropTypes.func.isRequired
 };
 
-export default AddDeck;
+const mapStateToProps = (state, ownProps) => ({
+	deckName: ownProps.navigation.state.params.deckName
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+	addCard: card => dispatch(addCardToDeck(ownProps.deckName, card))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddCard);

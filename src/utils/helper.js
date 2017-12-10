@@ -1,6 +1,6 @@
 import {Font} from 'expo';
 import md5 from 'js-md5';
-import {fetchDecks, storeDecks} from './api';
+import {loadDecks, storeDecks} from './api';
 
 export const loadFonts = () => {
 	return Font.loadAsync({
@@ -11,7 +11,7 @@ export const loadFonts = () => {
 };
 
 export const initSampleDataIfRequired = () => {
-	fetchDecks().then(
+	loadDecks().then(
 		data => {
 			const decks = JSON.parse(data);
 			if (!decks || !decks.length) {

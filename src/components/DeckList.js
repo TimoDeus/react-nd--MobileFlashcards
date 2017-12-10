@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {
 	Body,
 	Button,
@@ -11,120 +12,56 @@ import {
 	Left,
 	Right,
 	Text,
-	Thumbnail,
-	Toast
+	Thumbnail
 } from 'native-base';
 import {ADD_DECK_VIEW, DECK_VIEW, EDIT_DECK_VIEW} from '../navigation/MainNavigator';
-import {fetchDecks, storeDecks} from '../utils/api';
+import {loadDecks} from '../utils/api';
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import {gravatarImageSrc} from '../utils/helper';
+import {fetchDecks} from '../actions/index';
 
-export default class DeckList extends Component {
-
-	constructor() {
-		super();
-		this.state = {
-			decks: []
-		}
-	}
+class DeckList extends Component {
 
 	componentDidMount() {
 		this.fetchAllDecks();
 	}
 
 	fetchAllDecks = () => {
-		fetchDecks().then(
-			data => this.setState({decks: JSON.parse(data)})
+		const {fetchData} = this.props;
+		loadDecks().then(
+			data => fetchData(JSON.parse(data))
 		);
 	};
 
-	addNewDeck = name => {
-		const decks = this.state.decks || [];
-		const updatedDecks = [...decks, {cards: [], name: name}];
-		return storeDecks(updatedDecks).then(
-			() => this.setState(oldState => ({
-				...oldState,
-				decks: updatedDecks
-			}))
-		);
-	};
-
-	updateDeck = deck => {
-		const updatedDecks = [...(this.state.decks || [])];
-		const index = updatedDecks.findIndex(entry => entry.name === deck.name);
-		updatedDecks[index] = deck;
-		return storeDecks(updatedDecks).then(
-			() => this.setState(oldState => ({
-				...oldState,
-				decks: updatedDecks
-			}))
-		);
-	};
-
-	deleteDeck = name => {
-		const updatedDecks = this.state.decks.filter(deck => deck.name !== name);
-		return storeDecks(updatedDecks).then(
-			() => this.setState(oldState => ({
-				...oldState,
-				decks: updatedDecks
-			}))
-		);
-	};
-
-	navigateToEditDeck = deck => {
-		this.props.navigation.navigate(EDIT_DECK_VIEW, {
-			deleteDeckHandler: this.deleteDeck,
-			updateDeckHandler: this.updateDeck,
-			deck
-		})
-	};
-
-	navigateToDeck = deck => {
-		if (deck.cards.length) {
-			this.props.navigation.navigate(DECK_VIEW, {
-				deck
-			});
-		} else {
-			Toast.show({
-				text: 'Your deck is empty, please add some cards',
-				type: 'warning',
-				duration: 2000
-			})
-		}
-	};
-
-	navigateToAddDeck = () => {
-		this.props.navigation.navigate(
-			ADD_DECK_VIEW,
-			{onSubmitHandler: this.addNewDeck}
-		);
+	dispatchNavigation = target => {
+		this.props.navigation.navigate(target);
 	};
 
 	render() {
-		const {decks} = this.state;
+		const {decks} = this.props;
 		return (
 			<Container>
 				<DefaultHeader
 					title='Mobile Flashcards'
 					right={
-						<Button transparent onPress={this.navigateToAddDeck}>
+						<Button transparent onPress={() => this.dispatchNavigation(ADD_DECK_VIEW)}>
 							<Icon name="add"/>
 						</Button>
 					}
 				/>
 				<Content>
 					<Body>
-						<H1>Choose your deck</H1>
-						{(!decks || decks.length === 0) &&
-							<Text>You have no decks yet. Use the button in the upper right corner to add your first one!</Text>
-						}
+					<H1>Choose your deck</H1>
+					{(!decks || decks.length === 0) &&
+					<Text>You have no decks yet. Use the button in the upper right corner to add your first one!</Text>
+					}
 					</Body>
 					{decks && decks.length > 0 && decks.map(deck => {
 						const {name, cards} = deck;
 						return (
 							<Card key={name}>
-								<CardItem button onPress={() => this.navigateToDeck(deck)}>
+								<CardItem button onPress={() => this.dispatchNavigation(DECK_VIEW)}>
 									<Left>
 										<Thumbnail source={{uri: gravatarImageSrc(name)}}/>
 										<Body>
@@ -133,7 +70,7 @@ export default class DeckList extends Component {
 										</Body>
 									</Left>
 									<Right>
-										<Button transparent onPress={() => this.navigateToEditDeck(deck)}>
+										<Button transparent onPress={() => this.dispatchNavigation(EDIT_DECK_VIEW)}>
 											<Text>Edit</Text>
 										</Button>
 									</Right>
@@ -148,5 +85,17 @@ export default class DeckList extends Component {
 }
 
 DeckList.propTypes = {
-	navigation: PropTypes.shape().isRequired
+	navigation: PropTypes.shape().isRequired,
+	decks: PropTypes.array,
+	fetchData: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({
+	decks: state.decks
+});
+
+const mapDispatchToProps = dispatch => ({
+	fetchData: data => dispatch(fetchDecks(data))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeckList);
