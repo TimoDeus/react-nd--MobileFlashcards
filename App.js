@@ -1,7 +1,8 @@
 import React from 'react';
 import {AppLoading} from 'expo';
 import MainNavigator from './src/navigation/MainNavigator';
-import {loadFonts} from './src/utils/helper';
+import {initSampleDataIfRequired, loadFonts} from './src/utils/helper';
+import {Root} from 'native-base';
 
 export default class App extends React.Component {
 
@@ -13,13 +14,16 @@ export default class App extends React.Component {
 	}
 
 	componentWillMount() {
-		loadFonts().then(
+		Promise.all([
+			loadFonts(),
+			initSampleDataIfRequired()
+		]).then(
 			() => this.setState({isReady: true})
 		);
 	}
 
 	render() {
 		const {isReady} = this.state;
-		return isReady ? <MainNavigator/> : <AppLoading/>;
+		return isReady ? <Root><MainNavigator/></Root> : <AppLoading/>;
 	}
 }

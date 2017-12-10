@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Body, Button, Container, Content, H1, Icon, List, ListItem, Right, Text} from 'native-base';
+import {Body, Button, Container, Content, H1, Icon, Right, Text, Card, CardItem} from 'native-base';
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
@@ -68,23 +68,28 @@ class EditDeck extends Component {
 					}
 				/>
 				<Content>
+					<Body>
 					<H1>{deck.name}</H1>
-					<Text>The deck currently contains {deck.cards.length} cards.</Text>
-					<List
-						dataArray={deck.cards}
-						renderRow={card =>
-							<ListItem>
+					<Text>The deck currently contains {deck.cards.length} card(s).</Text>
+					</Body>
+					{deck.cards.map(card => (
+						<Card key={card.question}>
+							<CardItem>
 								<Body>
-									<Text>{card.question}</Text>
+								<Text>{card.question}</Text>
 								</Body>
 								<Right>
-									<Button small onPress={() => this.deleteCard(card)}><Text>Delete</Text></Button>
+									<Button transparent onPress={() => this.deleteCard(card)}>
+										<Icon name='trash'/>
+									</Button>
 								</Right>
-							</ListItem>
-						}>
-					</List>
+							</CardItem>
+						</Card>
+					))}
+					<Body>
+					<Button danger onPress={this.deleteDeck}><Text>Delete deck</Text></Button>
+					</Body>
 				</Content>
-				<Button onPress={this.deleteDeck}><Text>Delete deck</Text></Button>
 			</Container>
 		);
 	}

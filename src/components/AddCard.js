@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Container, Content, Form, Input, Item, Label, Text} from 'native-base';
+import {Body, Button, Container, Content, Form, Input, Item, Label, Text} from 'native-base';
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
@@ -25,7 +25,9 @@ class AddDeck extends Component {
 			<Container>
 				<DefaultHeader title='Add new card' left={<BackButton navigation={navigation}/>}/>
 				<Content>
+					<Body>
 					<Text>Please enter question and answer of your new card.</Text>
+					</Body>
 					<Form>
 						<Item fixedLabel>
 							<Label>Question</Label>
@@ -36,7 +38,9 @@ class AddDeck extends Component {
 							<Input onChangeText={answer => this.setState({answer})}/>
 						</Item>
 					</Form>
+					<Body>
 					<Button onPress={this.submit}><Text>Add card</Text></Button>
+					</Body>
 				</Content>
 			</Container>
 		);
