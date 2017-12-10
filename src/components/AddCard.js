@@ -8,12 +8,13 @@ class AddDeck extends Component {
 
 	constructor() {
 		super();
-		this.state = {name: ''}
+		this.state = {question: '', answer: ''}
 	}
 
 	submit = () => {
 		const {navigation} = this.props;
-		navigation.state.params.onSubmitHandler(this.state.name).then(
+		const card = {question: this.state.question, answer: this.state.answer};
+		navigation.state.params.onSubmitHandler(card).then(
 			() => navigation.goBack()
 		);
 	};
@@ -22,16 +23,20 @@ class AddDeck extends Component {
 		const {navigation} = this.props;
 		return (
 			<Container>
-				<DefaultHeader title='Add new deck' left={<BackButton navigation={navigation}/>}/>
+				<DefaultHeader title='Add new card' left={<BackButton navigation={navigation}/>}/>
 				<Content>
-					<Text>Please enter the name of your new deck.</Text>
+					<Text>Please enter question and answer of your new card.</Text>
 					<Form>
 						<Item fixedLabel>
-							<Label>Deck name</Label>
-							<Input autoFocus={true} onChangeText={name => this.setState({name})} />
+							<Label>Question</Label>
+							<Input autoFocus={true} onChangeText={question => this.setState({question})}/>
+						</Item>
+						<Item fixedLabel>
+							<Label>Answer</Label>
+							<Input onChangeText={answer => this.setState({answer})}/>
 						</Item>
 					</Form>
-					<Button onPress={this.submit}><Text>Add deck</Text></Button>
+					<Button onPress={this.submit}><Text>Add card</Text></Button>
 				</Content>
 			</Container>
 		);

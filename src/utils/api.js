@@ -6,17 +6,6 @@ export function fetchDecks() {
 	return AsyncStorage.getItem(DECK_STORAGE_KEY)
 }
 
-export function clearDecks() {
-	return AsyncStorage.removeItem(DECK_STORAGE_KEY);
+export function storeDecks(decks) {
+	return AsyncStorage.setItem(DECK_STORAGE_KEY, JSON.stringify(decks));
 }
-
-export const addDeck = deckName => {
-	return updateDeck(deckName, []);
-};
-
-export const updateDeck = (deckName, cards) => {
-	return AsyncStorage.mergeItem(
-		DECK_STORAGE_KEY,
-		JSON.stringify({[deckName]: cards})
-	);
-};

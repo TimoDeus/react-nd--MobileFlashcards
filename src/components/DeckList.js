@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
-import {Body, Button, Card, CardItem, Container, Content, Fab, Icon, Left, Right, Text, Thumbnail} from 'native-base';
-import {ADD_DECK_VIEW} from '../navigation/MainNavigator';
-import {addDeck, clearDecks, fetchDecks, updateDeck} from '../utils/api';
+import {Body, Button, Card, CardItem, Container, Content, H1, Icon, Left, Right, Text, Thumbnail} from 'native-base';
+import {ADD_DECK_VIEW, EDIT_DECK_VIEW} from '../navigation/MainNavigator';
+import {fetchDecks, storeDecks} from '../utils/api';
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
+import {gravatarImageSrc} from '../utils/helper';
 
 export default class DeckList extends Component {
 
 	constructor() {
 		super();
 		this.state = {
-			decks: {}
+			decks: []
 		}
 	}
 
@@ -25,59 +26,88 @@ export default class DeckList extends Component {
 	};
 
 	addNewDeck = name => {
-		return addDeck(name).then(this.fetchAllDecks);
+		const updatedDecks = [...(this.state.decks || []), {cards: [], name: name}];
+		return storeDecks(updatedDecks).then(
+			() => this.setState(oldState => ({
+				...oldState,
+				decks: updatedDecks
+			}))
+		);
 	};
 
-	addNewCard = () => {
-		const card = {name: Date.now()};
-		const existingCards = this.state.decks['myDeck'];
-		const cards = [...existingCards, card];
-		return updateDeck('myDeck', cards).then(this.fetchAllDecks);
+	updateDeck = deck => {
+		const updatedDecks = [...(this.state.decks || [])];
+		const index = updatedDecks.findIndex(entry => entry.name === deck.name);
+		updatedDecks[index] = deck;
+		return storeDecks(updatedDecks).then(
+			() => this.setState(oldState => ({
+				...oldState,
+				decks: updatedDecks
+			}))
+		);
 	};
 
-	removeDecks = () => {
-		return clearDecks().then(this.fetchAllDecks);
+	deleteDeck = name => {
+		const updatedDecks = this.state.decks.filter(deck => deck.name !== name);
+		return storeDecks(updatedDecks).then(
+			() => this.setState(oldState => ({
+				...oldState,
+				decks: updatedDecks
+			}))
+		);
 	};
 
 	render() {
 		const {decks} = this.state;
 		return (
 			<Container>
-				<DefaultHeader title='Choose your deck'/>
+				<DefaultHeader
+					title='Mobile Flashcards'
+					right={
+						<Button
+							transparent
+							onPress={() =>
+								this.props.navigation.navigate(ADD_DECK_VIEW,
+									{onSubmitHandler: this.addNewDeck})
+							}>
+							<Icon name="add"/>
+						</Button>
+					}
+				/>
 				<Content>
-					{decks ? Object.keys(decks).map(name => {
+					<H1>Choose your deck</H1>
+					{decks && decks.length ? decks.map(deck => {
+						const {name, cards} = deck;
 						return (
 							<Card key={name}>
 								<CardItem>
 									<Left>
-										<Thumbnail source={{uri: 'Image URL'}}/>
+										<Thumbnail source={{uri: gravatarImageSrc(name)}}/>
 										<Body>
 										<Text>{name}</Text>
-										<Text note>{decks[name].length} cards</Text>
+										<Text note>{cards.length} cards</Text>
 										</Body>
 									</Left>
 									<Right>
-										<Button transparent>
-											<Icon active name="trash" />
-											<Text>Delete</Text>
+										<Button
+											transparent
+											onPress={() => this.props.navigation.navigate(EDIT_DECK_VIEW, {
+												deleteDeckHandler: this.deleteDeck,
+												updateDeckHandler: this.updateDeck,
+												deck
+											})}
+										>
+											<Icon active name="cog"/>
+											<Text>Edit</Text>
 										</Button>
 									</Right>
 								</CardItem>
 							</Card>
 						)
 					}) : (
-						<Card>
-							<CardItem cardBody>
-								<Text>No decks yet</Text>
-							</CardItem>
-						</Card>
+						<Text>You have no decks yet. Use the button in the upper right corner to add your first one!</Text>
 					)}
 				</Content>
-				<Fab
-					position="bottomRight"
-					onPress={() => this.props.navigation.navigate(ADD_DECK_VIEW, {onSubmitHandler: this.addNewDeck})}>
-					<Icon name="add"/>
-				</Fab>
 			</Container>
 		);
 	}

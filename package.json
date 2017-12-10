@@ -24,6 +24,7 @@
   "dependencies": {
     "@expo/vector-icons": "^6.2.1",
     "expo": "^23.0.4",
+    "js-md5": "^0.7.2",
     "native-base": "^2.3.3",
     "prop-types": "^15.6.0",
     "react": "16.0.0",
