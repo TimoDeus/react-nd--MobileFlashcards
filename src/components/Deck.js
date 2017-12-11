@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
 import {shuffleArray} from '../utils/helper';
 import {StyleSheet} from 'react-native';
+import {clearLocalNotification, setLocalNotification} from '../utils/notifications';
 
 class Deck extends Component {
 
@@ -38,6 +39,9 @@ class Deck extends Component {
 				};
 			}
 		);
+		if (this.state.cardsSeen === this.state.totalCardCount) {
+			clearLocalNotification().then(setLocalNotification);
+		}
 	};
 
 	restart = () => {
@@ -54,12 +58,12 @@ class Deck extends Component {
 			<Content>
 				<Body>
 				<H1>You finished the deck!</H1>
-					<Text>{correct} of {totalCardCount} questions answered correctly.</Text>
-					<View style={styles.container}>
-						<Button onPress={this.restart}>
-							<Text>Restart</Text>
-						</Button>
-					</View>
+				<Text>{correct} of {totalCardCount} questions answered correctly.</Text>
+				<View style={styles.container}>
+					<Button onPress={this.restart}>
+						<Text>Restart</Text>
+					</Button>
+				</View>
 				</Body>
 			</Content>
 		);

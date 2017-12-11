@@ -6,6 +6,7 @@ import {Root} from 'native-base';
 import reducer from './src/reducers/index';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
+import { setLocalNotification } from './src/utils/notifications';
 
 export default class App extends React.Component {
 
@@ -27,6 +28,10 @@ export default class App extends React.Component {
 		]).then(
 			() => this.setState({isReady: true})
 		);
+	}
+
+	componentDidMount() {
+		setLocalNotification();
 	}
 
 	render() {
