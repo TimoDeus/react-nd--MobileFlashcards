@@ -1,20 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {
-	Body,
-	Button,
-	Card,
-	CardItem,
-	Container,
-	Content,
-	H1,
-	Icon,
-	Left,
-	Right,
-	Text,
-	Thumbnail
-} from 'native-base';
-import {ADD_DECK_VIEW, DECK_VIEW, EDIT_DECK_VIEW} from '../navigation/MainNavigator';
+import {Body, Button, Card, CardItem, Container, Content, H1, Icon, Left, Right, Text, Thumbnail} from 'native-base';
+import {ADD_DECK_VIEW, DECK_DETAIL_VIEW} from '../navigation/MainNavigator';
 import {loadDecks} from '../utils/api';
 import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
@@ -34,8 +21,8 @@ class DeckList extends Component {
 		);
 	};
 
-	dispatchNavigation = target => {
-		this.props.navigation.navigate(target);
+	dispatchNavigation = (target, params = {}) => {
+		this.props.navigation.navigate(target, params);
 	};
 
 	render() {
@@ -61,7 +48,7 @@ class DeckList extends Component {
 						const {name, cards} = deck;
 						return (
 							<Card key={name}>
-								<CardItem button onPress={() => this.dispatchNavigation(DECK_VIEW)}>
+								<CardItem button onPress={() => this.dispatchNavigation(DECK_DETAIL_VIEW, {deckName: name})}>
 									<Left>
 										<Thumbnail source={{uri: gravatarImageSrc(name)}}/>
 										<Body>
@@ -70,8 +57,8 @@ class DeckList extends Component {
 										</Body>
 									</Left>
 									<Right>
-										<Button transparent onPress={() => this.dispatchNavigation(EDIT_DECK_VIEW)}>
-											<Text>Edit</Text>
+										<Button transparent onPress={() => this.dispatchNavigation(DECK_DETAIL_VIEW, {deckName: name})}>
+											<Text>Details</Text>
 										</Button>
 									</Right>
 								</CardItem>

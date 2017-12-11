@@ -6,20 +6,21 @@ import BackButton from './header/BackButton';
 import {ADD_CARD_VIEW} from '../navigation/MainNavigator';
 import {connect} from 'react-redux';
 import {removeCardFromDeck, removeDeck} from '../actions/index';
+import {deleteDeck, updateOrCreateDeck} from '../utils/api';
 
-class EditDeck extends Component {
+class DeckDetails extends Component {
 
 	render() {
 		const {navigation, removeCard, removeDeck} = this.props;
-		const {deck} = this.state;
-		return (
+		const {deck} = this.props;
+		return deck ? (
 			<Container>
 				<DefaultHeader
-					title='Edit deck'
+					title='Deck details'
 					left={<BackButton navigation={navigation}/>}
 					right={
 						<Button transparent onPress={() =>
-							this.props.navigation.navigate(ADD_CARD_VIEW)}>
+							this.props.navigation.navigate(ADD_CARD_VIEW, {deckName: deck.name})}>
 							<Icon name="add"/>
 						</Button>
 					}
@@ -44,17 +45,18 @@ class EditDeck extends Component {
 						</Card>
 					))}
 					<Body>
-					<Button danger onPress={removeDeck}><Text>Delete deck</Text></Button>
+					<Button danger onPress={() => removeDeck(deck.name)}><Text>Delete deck</Text></Button>
 					</Body>
 				</Content>
 			</Container>
-		);
+		) : null;
 	}
 }
 
-EditDeck.propTypes = {
+DeckDetails.propTypes = {
 	navigation: PropTypes.shape().isRequired,
 	deckName: PropTypes.string.isRequired,
+	deck: PropTypes.shape(),
 	removeDeck: PropTypes.func.isRequired,
 	removeCard: PropTypes.func.isRequired,
 };
@@ -65,8 +67,21 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-	removeDeck: () => dispatch(removeDeck(ownProps.deckName)),
-	removeCard: card => dispatch(removeCardFromDeck(ownProps.deckName, card))
+	removeDeck: deckName => {
+		deleteDeck(deckName).then(
+			() => {
+				dispatch(removeDeck(deckName));
+				ownProps.navigation.goBack();
+			}
+		);
+	},
+	removeCard: card => {
+		const {deck} = ownProps;
+		const filteredCards = deck.cards.filter(entry => entry.question !== card.question);
+		updateOrCreateDeck(deck.name, filteredCards).then(
+			() => dispatch(removeCardFromDeck(ownProps.deckName, card))
+		);
+	}
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditDeck);
+export default connect(mapStateToProps, mapDispatchToProps)(DeckDetails);

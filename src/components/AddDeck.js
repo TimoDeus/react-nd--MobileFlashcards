@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
 import {connect} from 'react-redux';
 import {addDeck} from '../actions/index';
+import {NavigationActions} from 'react-navigation';
+import {DECK_LIST_VIEW, DECK_DETAIL_VIEW} from '../navigation/MainNavigator';
+import {storeNewDeck} from '../utils/api';
 
 class AddDeck extends Component {
 
@@ -15,19 +18,19 @@ class AddDeck extends Component {
 
 	submit = () => {
 		const {navigation, addNewDeck} = this.props;
-		addNewDeck(this.state.name).then(
-			// TODO use this when redux is connected
-			// () => {
-			// 	const resetAction = NavigationActions.reset({
-			// 		index: 0,
-			// 		actions: [
-			// 			NavigationActions.navigate({routeName: DECK_LIST_VIEW}),
-			// 			NavigationActions.navigate({routeName: EDIT_DECK_VIEW}),
-			// 		]
-			// 	});
-			// 	this.props.navigation.dispatch(resetAction);
-			// }
-			() => navigation.goBack()
+		const {name} = this.state;
+		storeNewDeck(name).then(
+			() => {
+				addNewDeck(name);
+				const resetAction = NavigationActions.reset({
+					index: 1,
+					actions: [
+						NavigationActions.navigate({routeName: DECK_LIST_VIEW}),
+						NavigationActions.navigate({routeName: DECK_DETAIL_VIEW, params: {deckName: name}})
+					]
+				});
+				navigation.dispatch(resetAction);
+			}
 		);
 	};
 
