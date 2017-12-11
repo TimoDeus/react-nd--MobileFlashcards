@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
 import {addCardToDeck} from '../actions/index';
 import {connect} from 'react-redux';
+import {storeNewCard} from '../utils/api';
 
 class AddCard extends Component {
 
@@ -14,9 +15,14 @@ class AddCard extends Component {
 	}
 
 	submit = () => {
+		const {navigation} = this.props;
+		const deckName = navigation.state.params.deckName;
 		const card = {question: this.state.question, answer: this.state.answer};
-		this.props.addCard(card);
-		this.props.navigation.goBack();
+		storeNewCard(deckName, card).then(
+			() => {
+				this.props.addCard(deckName, card);
+				this.props.navigation.goBack();
+			});
 	};
 
 	render() {
@@ -52,12 +58,8 @@ AddCard.propTypes = {
 	addCard: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-	deckName: ownProps.navigation.state.params.deckName
+const mapDispatchToProps = dispatch => ({
+	addCard: (deckName, card) => dispatch(addCardToDeck(deckName, card))
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-	addCard: card => dispatch(addCardToDeck(ownProps.deckName, card))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddCard);
+export default connect(null, mapDispatchToProps)(AddCard);

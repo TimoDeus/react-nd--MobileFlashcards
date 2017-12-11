@@ -11,20 +11,33 @@ export function storeDecks(decks) {
 }
 
 export function storeNewDeck(deckName) {
-	return updateOrCreateDeck(deckName, []);
+	const deck = {name: deckName, cards: []};
+	return loadDecks().then(
+		result => {
+			const decks = JSON.parse(result);
+			decks.push(deck);
+			return storeDecks(decks);
+		}
+	);
 }
 
-export function updateOrCreateDeck(deckName, cards) {
-	const deck = {name: deckName, cards};
+export function updateDeck(deckName, cards) {
 	return loadDecks().then(
 		result => {
 			const decks = JSON.parse(result);
 			const index = decks.findIndex(entry => entry.name === deckName);
-			if (index === -1) {
-				decks.push(deck)
-			} else {
-				decks[index] = deck;
-			}
+			decks[index].cards = cards;
+			return storeDecks(decks);
+		}
+	);
+}
+
+export function storeNewCard(deckName, card) {
+	return loadDecks().then(
+		result => {
+			const decks = JSON.parse(result);
+			const index = decks.findIndex(entry => entry.name === deckName);
+			decks[index].cards.push(card);
 			return storeDecks(decks);
 		}
 	);

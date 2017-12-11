@@ -6,7 +6,7 @@ import BackButton from './header/BackButton';
 import {ADD_CARD_VIEW} from '../navigation/MainNavigator';
 import {connect} from 'react-redux';
 import {removeCardFromDeck, removeDeck} from '../actions/index';
-import {deleteDeck, updateOrCreateDeck} from '../utils/api';
+import {deleteDeck, updateDeck} from '../utils/api';
 
 class DeckDetails extends Component {
 
@@ -37,7 +37,7 @@ class DeckDetails extends Component {
 								<Text>{card.question}</Text>
 								</Body>
 								<Right>
-									<Button transparent onPress={() => removeCard(card)}>
+									<Button transparent onPress={() => removeCard(deck, card)}>
 										<Icon name='trash'/>
 									</Button>
 								</Right>
@@ -75,11 +75,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 			}
 		);
 	},
-	removeCard: card => {
-		const {deck} = ownProps;
+	removeCard: (deck, card) => {
 		const filteredCards = deck.cards.filter(entry => entry.question !== card.question);
-		updateOrCreateDeck(deck.name, filteredCards).then(
-			() => dispatch(removeCardFromDeck(ownProps.deckName, card))
+		updateDeck(deck.name, filteredCards).then(
+			() => dispatch(removeCardFromDeck(deck.name, card))
 		);
 	}
 });
