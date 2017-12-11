@@ -59,12 +59,15 @@ class Deck extends Component {
 				<Body>
 				<H1>You finished the deck!</H1>
 				<Text>{correct} of {totalCardCount} questions answered correctly.</Text>
+				</Body>
 				<View style={styles.container}>
 					<Button onPress={this.restart}>
 						<Text>Restart</Text>
 					</Button>
+					<Button onPress={() => this.props.navigation.goBack()}>
+						<Text>Go Back</Text>
+					</Button>
 				</View>
-				</Body>
 			</Content>
 		);
 	};
@@ -130,9 +133,9 @@ const styles = StyleSheet.create({
 		padding: 15
 	},
 	container: {
+		flexDirection: 'row',
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'space-around',
 		padding: 15
 	}
 });
