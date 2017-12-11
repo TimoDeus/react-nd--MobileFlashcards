@@ -40,7 +40,7 @@ class DeckDetails extends Component {
 						{deck.cards.length > 0 && (
 					<View style={styles.container}>
 							<Button onPress={() => this.props.navigation.navigate(DECK_VIEW, {deck})}>
-								<Text>Start learning</Text>
+								<Text>Start Quiz</Text>
 							</Button>
 					</View>
 						)}

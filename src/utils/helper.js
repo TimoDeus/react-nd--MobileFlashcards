@@ -50,7 +50,7 @@ const initSampleData = () => {
 	return storeDecks(sampleData);
 };
 
-export const gravatarImageSrc = (token, size = 32) => {
+export const gravatarImageSrc = (token, size = 64) => {
 	return `https://www.gravatar.com/avatar/${md5(token)}?d=identicon&s=${size}`
 };
 

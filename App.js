@@ -16,6 +16,10 @@ export default class App extends React.Component {
 		};
 	}
 
+	/**
+	 * Note: componentWillMount has to be used here instead of componentDidMount!
+	 * NativeBase required fonts to be loaded before rendering, otherwise it throws an exception.
+	 */
 	componentWillMount() {
 		Promise.all([
 			loadFonts(),
