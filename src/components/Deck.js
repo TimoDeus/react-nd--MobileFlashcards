@@ -4,6 +4,7 @@ import DefaultHeader from './header/DefaultHeader';
 import PropTypes from 'prop-types';
 import BackButton from './header/BackButton';
 import {shuffleArray} from '../utils/helper';
+import {StyleSheet} from 'react-native';
 
 class Deck extends Component {
 
@@ -52,10 +53,13 @@ class Deck extends Component {
 		return (
 			<Content>
 				<Body>
-					<Text>Answered {correct} of {totalCardCount} questions correctly.</Text>
-					<Button onPress={this.restart}>
-						<Text>Restart</Text>
-					</Button>
+				<H1>You finished the deck!</H1>
+					<Text>{correct} of {totalCardCount} questions answered correctly.</Text>
+					<View style={styles.container}>
+						<Button onPress={this.restart}>
+							<Text>Restart</Text>
+						</Button>
+					</View>
 				</Body>
 			</Content>
 		);
@@ -63,16 +67,7 @@ class Deck extends Component {
 
 	renderControls = () => {
 		return (
-			<View style={{
-				flexDirection: "row",
-				flex: 1,
-				position: "absolute",
-				bottom: 50,
-				left: 0,
-				right: 0,
-				justifyContent: 'space-between',
-				padding: 15
-			}}>
+			<View style={styles.buttonContainer}>
 				<Button danger onPress={() => this.onNextCard(false)}>
 					<Text>Incorrect</Text>
 				</Button>
@@ -118,6 +113,25 @@ class Deck extends Component {
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	buttonContainer: {
+		flexDirection: "row",
+		flex: 1,
+		position: "absolute",
+		bottom: 50,
+		left: 0,
+		right: 0,
+		justifyContent: 'space-between',
+		padding: 15
+	},
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 15
+	}
+});
 
 Deck.propTypes = {
 	navigation: PropTypes.shape().isRequired
